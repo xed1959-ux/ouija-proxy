@@ -18,7 +18,18 @@ def ask():
 
     message = data.get("message", "")
 
-    response = f"You asked: {message}"
+    import random
+
+responses = [
+    "I AM NOT WHAT YOU THINK.",
+    "I WAS HERE BEFORE YOU.",
+    "YOU SHOULD NOT ASK THAT.",
+    "THE ANSWER IS UNCLEAR.",
+    "YES",
+    "NO"
+]
+
+response = random.choice(responses)
 
     return jsonify({
         "reply": response
