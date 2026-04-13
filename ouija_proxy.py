@@ -1,3 +1,6 @@
+@app.route("/")
+def home():
+    return "Ouija proxy is running."
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
