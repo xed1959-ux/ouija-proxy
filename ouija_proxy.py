@@ -11,7 +11,7 @@ def home():
     return "Ouija proxy is running"
 
 # -------------------------
-# ASK
+# ASK (AI / spirit response)
 # -------------------------
 @app.route("/ask", methods=["POST"])
 def ask():
@@ -35,7 +35,7 @@ def ask():
     })
 
 # -------------------------
-# THINK
+# THINK (optional test endpoint)
 # -------------------------
 @app.route("/think", methods=["POST"])
 def think():
@@ -50,7 +50,7 @@ def think():
     })
 
 # -------------------------
-# RUN (vain localille)
+# LOCAL RUN ONLY
 # -------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
