@@ -179,7 +179,7 @@ def ask():
         "Monsters are real, and ghosts are real too. They live inside us, and sometimes, they win.",
 "Death is no more than passing from one room into another.",
 "A person terrified with the imagination of spectres, is more reasonable than one who thinks the appearance of spirits fabulous and groundless.",
-"The murdered do haunt their murderers. Be with me! Only do not leave me in this abyss”,
+"The murdered do haunt their murderers.",
 "It’s easier to dismiss ghosts in the daylight.",
 "A house is never still in darkness to those who listen intently",
 "Don’t matter if you believe in ghosts or not. We are there, we are there.",
