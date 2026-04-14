@@ -37,18 +37,11 @@ def ask():
         print("ABOUT TO CALL OPENAI")
 
         response = client.responses.create(
-            model="gpt-4.1-mini",
-            input=[
-                {
-                    "role": "system",
-                    "content": "You are a mysterious Ouija board spirit. Answer briefly, eerie, and slightly cryptic."
-                },
-                {
-                    "role": "user",
-                    "content": message
-                }
-            ]
+            model="gpt-4o-mini",
+            input="You are a mysterious Ouija board spirit. Answer briefly and eerily.\nUser: " + message
         )
+
+        print("RAW RESPONSE:", response)
 
         reply = response.output_text
 
@@ -59,7 +52,7 @@ def ask():
 
     except Exception as e:
         print("🔥 OPENAI FAILED:", repr(e))
-        return jsonify({"reply": "THE SPIRIT IS SILENT..."})
+        return jsonify({"reply": "OPENAI ERROR: " + str(e)})
 
 # -------------------------
 # THINK (test endpoint)
