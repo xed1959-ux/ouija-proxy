@@ -1,13 +1,14 @@
 from flask import Flask, request, jsonify
 from openai import OpenAI
+import os
 
 app = Flask(__name__)
 
-# 🔑 OpenAI client (käyttää Renderin OPENAI_API_KEY)
+# OpenAI client (käyttää Renderin OPENAI_API_KEY ympäristömuuttujaa)
 client = OpenAI()
 
 # -------------------------
-# ROOT (testi)
+# ROOT
 # -------------------------
 @app.route("/")
 def home():
@@ -18,14 +19,15 @@ def home():
 # -------------------------
 @app.route("/ask", methods=["POST"])
 def ask():
-   
-    import os
-print("ENV KEY:", os.environ.get("OPENAI_API_KEY"))
+
+    print("ASK ENDPOINT HIT")
 
     data = request.get_json() or {}
     message = data.get("message", "")
 
     try:
+        print("ABOUT TO CALL OPENAI")
+
         completion = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -47,14 +49,13 @@ print("ENV KEY:", os.environ.get("OPENAI_API_KEY"))
         })
 
     except Exception as e:
-        print("ERROR:", str(e))  # näkyy Render logsissa
-
+        print("OPENAI ERROR:", str(e))
         return jsonify({
             "reply": "THE SPIRIT IS SILENT..."
         })
 
 # -------------------------
-# THINK (testi/debug)
+# THINK (testi)
 # -------------------------
 @app.route("/think", methods=["POST"])
 def think():
@@ -69,4 +70,7 @@ def think():
 # LOCAL RUN
 # -------------------------
 if __name__ == "__main__":
+    print("SERVER STARTING...")
+    print("OPENAI KEY LOADED:", bool(os.getenv("OPENAI_API_KEY")))
+
     app.run(host="0.0.0.0", port=10000)
