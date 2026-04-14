@@ -91,7 +91,7 @@ def ask():
     # -------------------------
     # YES / NO BOOST
     # -------------------------
-    yes_no = any(w in message for w in ["onko", "oletko", "olenko"])
+    yes_no = any(w in message for w in ["onko", "oletko", "olenko", "is there", "is it", "Am I"])
 
     if yes_no:
         response = random.choice(["YES", "NO", "YES", "NO", "MAYBE", "YES"])
