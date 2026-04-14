@@ -4,8 +4,10 @@ import os
 
 app = Flask(__name__)
 
-# OpenAI client (käyttää Renderin OPENAI_API_KEY ympäristömuuttujaa)
-client = OpenAI()
+# -------------------------
+# OpenAI client
+# -------------------------
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # -------------------------
 # ROOT
@@ -22,23 +24,48 @@ def ask():
 
     print("ASK ENDPOINT HIT")
 
+    data = request.get_json() or {}
+    message = data.get("message", "")
+
+    if not message:
+        return jsonify({"reply": "..."})
+
     try:
-        import openai
-        print("OPENAI LIB LOADED")
+        print("ABOUT TO CALL OPENAI")
 
-        print("ENV KEY EXISTS:", os.getenv("OPENAI_API_KEY") is not None)
+        completion = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a mysterious ouija board spirit. "
+                        "Answer briefly, cryptically, and slightly eerie."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": message
+                }
+            ]
+        )
 
-        return jsonify({"reply": "DEBUG OK - NO OPENAI CALL YET"})
+        reply = completion.choices[0].message.content.strip()
+
+        print("OPENAI RESPONSE OK")
+
+        return jsonify({"reply": reply})
 
     except Exception as e:
-        print("CRASH:", str(e))
-        return jsonify({"reply": "SERVER CRASH"})
+        print("OPENAI ERROR:", str(e))
+        return jsonify({"reply": "THE SPIRIT IS SILENT..."})
 
 # -------------------------
-# THINK (testi)
+# THINK (test endpoint)
 # -------------------------
 @app.route("/think", methods=["POST"])
 def think():
+
     data = request.get_json() or {}
     message = data.get("message", "")
 
@@ -50,6 +77,7 @@ def think():
 # LOCAL RUN
 # -------------------------
 if __name__ == "__main__":
+
     print("SERVER STARTING...")
     print("OPENAI KEY LOADED:", bool(os.getenv("OPENAI_API_KEY")))
 
