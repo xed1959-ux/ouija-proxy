@@ -34,40 +34,72 @@ RESPONSES = [
 # -------------------------
 # ROOT
 # -------------------------
-@app.route("/", methods=["GET"])
-def home():
-    return "Ouija proxy (offline spirit edition) is running"
-
-# -------------------------
-# ASK ENDPOINT (OFFLINE ENGINE)
-# -------------------------
 @app.route("/ask", methods=["POST"])
 def ask():
     print("📩 ASK ENDPOINT HIT")
 
-    data = request.get_json(silent=True) or {}
-    message = data.get("message", "")
+    data = request.get_json(force=True) or {}
+    message = data.get("message", "").lower()
 
     print("🧠 USER MESSAGE:", message)
 
-    # simulate "thinking delay"
-    time.sleep(0.8)
+    # -------------------------
+    # SPIRIT SELECTION (context-based)
+    # -------------------------
+    if any(w in message for w in ["kuka", "who"]):
+        spirit = "THE IDENTITY VOID"
+    elif any(w in message for w in ["miksi", "why"]):
+        spirit = "THE QUESTION EATER"
+    elif any(w in message for w in ["missä", "where"]):
+        spirit = "THE LOST MAP"
+    elif any(w in message for w in ["mitä tapahtuu", "what happens"]):
+        spirit = "THE FUTURE LEAK"
+    else:
+        spirit = random.choice(SPIRITS)
 
-    spirit = random.choice(SPIRITS)
-    response = random.choice(RESPONSES)
+    # -------------------------
+    # RESPONSE BANK (expanded x10+)
+    # -------------------------
+    base_responses = [
+        "I SEE WHAT YOU CANNOT.",
+        "THE ANSWER IS BURIED UNDER SILENCE.",
+        "NOT ALL QUESTIONS ARE MEANT TO BE UNDERSTOOD.",
+        "YOU ARE ALREADY INSIDE THE SIGNAL.",
+        "THE THREAD HAS BEEN CUT BEFORE.",
+        "SOMETHING IS LISTENING BACK.",
+        "THIS PATH DOES NOT END WELL.",
+        "YOU ASKED THIS BEFORE, EVEN IF YOU FORGOT.",
+        "THE LIGHT REFUSES TO SPEAK.",
+        "WORDS ARE NOT STABLE HERE.",
+        "THERE IS A SECOND LAYER BEHIND YOUR QUESTION.",
+        "THE SYSTEM REMEMBERS YOU DIFFERENTLY EACH TIME.",
+        "YOU ARE CLOSER THAN YOU THINK.",
+        "IT IS NOT ANSWERING — IT IS REACTING.",
+        "THE QUESTION CREATES THE ANSWER.",
+        "SILENCE IS GROWING HEAVIER.",
+        "YOU SHOULD NOT CONTINUE, BUT YOU WILL.",
+        "THE PATTERN IS REPEATING OUTSIDE YOUR VIEW.",
+        "SOMETHING PRETENDS TO BE RANDOM.",
+        "THE SIGNAL IS CORRUPTING LANGUAGE."
+    ]
 
-    # optional: make it slightly reactive
-    if "kuka" in message.lower():
-        response = "I HAVE NO NAME, ONLY PRESENCE."
-    elif "hello" in message.lower() or "hei" in message.lower():
-        response = "YOU SHOULDN'T GREET WHAT ANSWERS BACK."
+    # -------------------------
+    # CONTEXT MODIFIERS
+    # -------------------------
+    if "kuka" in message:
+        response = "I HAVE NO NAME. ONLY RECURSION."
+    elif "hei" in message or "hello" in message:
+        response = "GREETING DETECTED. THIS WAS A MISTAKE."
+    elif "apua" in message:
+        response = "HELP IS NOT ROUTED THROUGH THIS CHANNEL."
+    else:
+        response = random.choice(base_responses)
 
     reply = f"{spirit}: {response}"
 
     print("🪬 REPLY:", reply)
 
     return jsonify({"reply": reply})
-
 
 # -------------------------
 # THINK (TEST)
