@@ -56,9 +56,9 @@ def ask():
 
         return jsonify({"reply": reply})
 
-    except Exception as e:
-        print("OPENAI ERROR:", str(e))
-        return jsonify({"reply": "THE SPIRIT IS SILENT..."})
+except Exception as e:
+    print("🔥 OPENAI FAILED:", repr(e))
+    return jsonify({"reply": "ERROR: " + str(e)})
 
 # -------------------------
 # THINK (test endpoint)
