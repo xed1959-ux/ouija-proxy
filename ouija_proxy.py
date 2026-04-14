@@ -4,22 +4,12 @@ import os
 
 app = Flask(__name__)
 
-# -------------------------
-# OpenAI client (IMPORTANT: no api_key= here)
-# Render reads OPENAI_API_KEY automatically
-# -------------------------
 client = OpenAI()
 
-# -------------------------
-# ROOT
-# -------------------------
 @app.route("/")
 def home():
     return "Ouija proxy is running"
 
-# -------------------------
-# ASK (AI spirit)
-# -------------------------
 @app.route("/ask", methods=["POST"])
 def ask():
 
@@ -42,10 +32,7 @@ def ask():
             messages=[
                 {
                     "role": "system",
-                    "content": (
-                        "You are a mysterious ouija board spirit. "
-                        "Answer briefly, cryptically, and eerily."
-                    )
+                    "content": "You are a mysterious ouija board spirit. Answer briefly and eerily."
                 },
                 {
                     "role": "user",
@@ -56,8 +43,7 @@ def ask():
 
         reply = completion.choices[0].message.content.strip()
 
-        print("✅ OPENAI RESPONSE OK")
-        print("🧿 REPLY:", reply)
+        print("✅ OPENAI OK:", reply)
 
         return jsonify({"reply": reply})
 
@@ -65,9 +51,6 @@ def ask():
         print("🔥 OPENAI FAILED:", repr(e))
         return jsonify({"reply": "THE SPIRIT IS SILENT..."})
 
-# -------------------------
-# THINK (TEST)
-# -------------------------
 @app.route("/think", methods=["POST"])
 def think():
 
@@ -78,9 +61,6 @@ def think():
         "reply": "SPIRIT THINKS: " + message[::-1]
     })
 
-# -------------------------
-# LOCAL RUN ONLY
-# -------------------------
 if __name__ == "__main__":
 
     print("🚀 SERVER STARTING...")
