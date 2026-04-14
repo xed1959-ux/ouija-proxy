@@ -3,19 +3,18 @@ from openai import OpenAI
 
 app = Flask(__name__)
 
-# 🔑 Lisää oma API-avain Renderiin environment variableen:
-# OPENAI_API_KEY
+# 🔑 OpenAI client (käyttää Renderin OPENAI_API_KEY)
 client = OpenAI()
 
 # -------------------------
-# ROOT
+# ROOT (testi)
 # -------------------------
 @app.route("/")
 def home():
-    return "Ouija proxy is running (AI spirit active)"
+    return "Ouija proxy is running"
 
 # -------------------------
-# ASK (REAL AI SPIRIT)
+# ASK (AI spirit)
 # -------------------------
 @app.route("/ask", methods=["POST"])
 def ask():
@@ -23,16 +22,12 @@ def ask():
     message = data.get("message", "")
 
     try:
-        response = client.chat.completions.create(
+        completion = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {
                     "role": "system",
-                    "content": (
-                        "You are an ancient mysterious ouija board spirit. "
-                        "You answer briefly, cryptically, and slightly eerie. "
-                        "Never be too long. Speak like a spirit."
-                    )
+                    "content": "You are a mysterious ouija board spirit. Answer briefly and eerily."
                 },
                 {
                     "role": "user",
@@ -41,27 +36,33 @@ def ask():
             ]
         )
 
-        reply = response.choices[0].message.content.strip()
+        reply = completion.choices[0].message.content
 
-        return jsonify({"reply": reply})
+        return jsonify({
+            "reply": reply
+        })
 
     except Exception as e:
-        return jsonify({"reply": "THE SPIRIT IS SILENT..."}), 500
+        print("ERROR:", str(e))  # näkyy Render logsissa
+
+        return jsonify({
+            "reply": "THE SPIRIT IS SILENT..."
+        })
 
 # -------------------------
-# THINK (TEST ENDPOINT)
+# THINK (testi/debug)
 # -------------------------
 @app.route("/think", methods=["POST"])
 def think():
     data = request.get_json() or {}
     message = data.get("message", "")
 
-    reply = "SPIRIT ANSWERS: " + message[::-1]
-
-    return jsonify({"reply": reply})
+    return jsonify({
+        "reply": "SPIRIT THINKS: " + message[::-1]
+    })
 
 # -------------------------
-# LOCAL RUN ONLY
+# LOCAL RUN
 # -------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
