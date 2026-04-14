@@ -175,7 +175,22 @@ def ask():
         "Courage is a love affair with the unknown",
         "The real question is not whether life exists after death. The real question is whether you are alive before death",
         "Birds fly, but they don't leave any footprints. You cannot follow them; there are no footprints left behind",
-        "Don't be too serious about life. It's just a play"
+        "Don't be too serious about life. It's just a play",
+        "Monsters are real, and ghosts are real too. They live inside us, and sometimes, they win.",
+"Death is no more than passing from one room into another.",
+"A person terrified with the imagination of spectres, is more reasonable than one who thinks the appearance of spirits fabulous and groundless.",
+"The murdered do haunt their murderers. Be with me! Only do not leave me in this abyss”,
+"It’s easier to dismiss ghosts in the daylight.",
+"A house is never still in darkness to those who listen intently",
+"Don’t matter if you believe in ghosts or not. We are there, we are there.",
+"Vanity of vanities, all is vanity",
+"Ghosts are all around us. Seek them out, and you shall discover them.",
+"They be seen, they creep in the dark.",
+"Ghosts don't ask permission",
+"If you feel someone watching, it's because they are.",
+"Nothing haunts us like the things we don't say.",
+"Some spirits stay behind to remind us of what we once were.",
+"In the end, every heart becomes a haunted house."
     ]
 
     # -------------------------
