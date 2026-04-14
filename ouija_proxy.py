@@ -128,7 +128,22 @@ def ask():
 "WEALTH SERVES JUSTICE THE WAY VIOLENCE BETRAYS HOPE.",
 "OUR BODIES ARE NOT OURS ALONE; THEY ARE THE TREMBULOUS SWITCHING POSTS OF ALL CALAMITIES AND EXHILARATIONS.",
 "POVERTY SHOULD BE AGAINST OUR PRINCIPLES, NOT AGAINST THE LAW.",
-"THERE’S NO MORE TREACHEROUS BOG THAN A BOURGEOIS FANTASY OF PERFECTION."
+"THERE’S NO MORE TREACHEROUS BOG THAN A BOURGEOIS FANTASY OF PERFECTION.",
+        "Be — don't try to become",
+"Truth is not something outside to be discovered; it is something inside to be realized",
+"Life begins where fear ends",
+"Just to be is such a benediction",
+"Experience life in all possible ways -- good-bad, bitter-sweet, dark-light, summer-winter",
+"Love is a state of your being, not a relationship",
+"Don't seek, don't search, don't ask, don't knock, don't demand – relax",
+"If you love a flower, don't pick it up... Love is not about possession. It is about appreciation",
+"Meditation is a way to nourish the soul",
+"Be realistic: Plan for a miracle",
+"The moment you accept yourself, you become beautiful",
+"Courage is a love affair with the unknown",
+"The real question is not whether life exists after death. The real question is whether you are alive before death",
+"Birds fly, but they don't leave any footprints. You cannot follow them; there are no footprints left behind",
+"Don't be too serious about life. It's just a play"
     ]
     # -------------------------
     # YES / NO BOOST
