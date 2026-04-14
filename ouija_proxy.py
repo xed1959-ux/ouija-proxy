@@ -30,7 +30,7 @@ def ask():
     print("📩 ASK ENDPOINT HIT")
 
     try:
-        data = request.get_json() or {}
+        data = request.get_json(force=True) or {}
         message = data.get("message", "")
 
         print("🧠 USER MESSAGE:", message)
@@ -41,7 +41,7 @@ def ask():
             input=[
                 {
                     "role": "system",
-                    "content": "You are a mysterious Ouija board spirit. Answer briefly, slightly eerie, but helpful."
+                    "content": "You are a mysterious Ouija board spirit. Answer briefly, eerie, and slightly cryptic."
                 },
                 {
                     "role": "user",
@@ -53,13 +53,13 @@ def ask():
         reply = response.output_text
 
         print("✅ OPENAI RESPONSE OK")
+        print("🪬 REPLY:", reply)
 
         return jsonify({"reply": reply})
 
     except Exception as e:
         print("🔥 OPENAI FAILED:", repr(e))
         return jsonify({"reply": "THE SPIRIT IS SILENT..."})
-
 
 # -------------------------
 # THINK (test endpoint)
@@ -69,7 +69,6 @@ def think():
     data = request.get_json() or {}
     message = data.get("message", "")
     return jsonify({"reply": "SPIRIT MIRRORS: " + message[::-1]})
-
 
 # -------------------------
 # RUN (LOCAL ONLY)
