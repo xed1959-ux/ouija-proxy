@@ -18,8 +18,9 @@ def home():
 # -------------------------
 @app.route("/ask", methods=["POST"])
 def ask():
+   
     import os
-    print("OPENAI KEY LOADED:", os.getenv("OPENAI_API_KEY"))
+print("ENV KEY:", os.environ.get("OPENAI_API_KEY"))
 
     data = request.get_json() or {}
     message = data.get("message", "")
