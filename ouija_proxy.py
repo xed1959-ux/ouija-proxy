@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from openai import OpenAI
 import os
+import traceback
 
 app = Flask(__name__)
 
@@ -10,7 +11,6 @@ print("🚀 SERVER STARTING...")
 # OPENAI CLIENT
 # -------------------------
 api_key = os.getenv("OPENAI_API_KEY")
-
 print("🔑 OPENAI KEY LOADED:", bool(api_key))
 
 client = OpenAI(api_key=api_key)
@@ -23,45 +23,68 @@ def home():
     return "Ouija proxy is running"
 
 # -------------------------
-# ASK ENDPOINT
+# ASK ENDPOINT (SAFE MODE)
 # -------------------------
 @app.route("/ask", methods=["POST"])
 def ask():
     print("📩 ASK ENDPOINT HIT")
 
     try:
-        data = request.get_json(force=True) or {}
-        message = data.get("message", "")
+        # SAFE JSON PARSE (ei kaadu ikinä HTML-erroriin)
+        data = request.get_json(force=True, silent=True)
 
+        if not data:
+            print("⚠️ NO JSON RECEIVED")
+            return jsonify({"reply": "NO JSON RECEIVED"}), 400
+
+        message = data.get("message", "")
         print("🧠 USER MESSAGE:", message)
         print("ABOUT TO CALL OPENAI")
 
-        response = client.responses.create(
-            model="gpt-4o-mini",
-            input="You are a mysterious Ouija board spirit. Answer briefly and eerily.\nUser: " + message
-        )
+        # OpenAI CALL
+        try:
+            response = client.responses.create(
+                model="gpt-4o-mini",
+                input=f"You are a mysterious Ouija board spirit. Be short, eerie and cryptic.\nUser: {message}"
+            )
 
-        print("RAW RESPONSE:", response)
+            reply = response.output_text
 
-        reply = response.output_text
+            print("✅ OPENAI SUCCESS")
+            print("🪬 REPLY:", reply)
 
-        print("✅ OPENAI RESPONSE OK")
-        print("🪬 REPLY:", reply)
+            return jsonify({"reply": reply})
 
-        return jsonify({"reply": reply})
+        except Exception as openai_error:
+            print("🔥 OPENAI FAILED:")
+            print(repr(openai_error))
+            print(traceback.format_exc())
+
+            return jsonify({
+                "reply": "OPENAI ERROR",
+                "detail": str(openai_error)
+            }), 500
 
     except Exception as e:
-        print("🔥 OPENAI FAILED:", repr(e))
-        return jsonify({"reply": "OPENAI ERROR: " + str(e)})
+        print("💀 FATAL ERROR:")
+        print(repr(e))
+        print(traceback.format_exc())
+
+        return jsonify({
+            "reply": "FATAL ERROR",
+            "detail": str(e)
+        }), 500
+
 
 # -------------------------
-# THINK (test endpoint)
+# THINK (TEST ENDPOINT)
 # -------------------------
 @app.route("/think", methods=["POST"])
 def think():
     data = request.get_json() or {}
     message = data.get("message", "")
     return jsonify({"reply": "SPIRIT MIRRORS: " + message[::-1]})
+
 
 # -------------------------
 # RUN (LOCAL ONLY)
