@@ -5,9 +5,10 @@ import os
 app = Flask(__name__)
 
 # -------------------------
-# OpenAI client
+# OpenAI client (IMPORTANT: no api_key= here)
+# Render reads OPENAI_API_KEY automatically
 # -------------------------
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI()
 
 # -------------------------
 # ROOT
@@ -22,16 +23,19 @@ def home():
 @app.route("/ask", methods=["POST"])
 def ask():
 
-    print("ASK ENDPOINT HIT")
+    print("👻 ASK ENDPOINT HIT")
 
     data = request.get_json() or {}
     message = data.get("message", "")
+
+    print("📩 MESSAGE:", message)
+    print("🔑 KEY EXISTS:", os.getenv("OPENAI_API_KEY") is not None)
 
     if not message:
         return jsonify({"reply": "..."})
 
     try:
-        print("ABOUT TO CALL OPENAI")
+        print("⚡ CALLING OPENAI...")
 
         completion = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -40,7 +44,7 @@ def ask():
                     "role": "system",
                     "content": (
                         "You are a mysterious ouija board spirit. "
-                        "Answer briefly, cryptically, and slightly eerie."
+                        "Answer briefly, cryptically, and eerily."
                     )
                 },
                 {
@@ -52,16 +56,17 @@ def ask():
 
         reply = completion.choices[0].message.content.strip()
 
-        print("OPENAI RESPONSE OK")
+        print("✅ OPENAI RESPONSE OK")
+        print("🧿 REPLY:", reply)
 
         return jsonify({"reply": reply})
 
-except Exception as e:
-    print("🔥 OPENAI FAILED:", repr(e))
-    return jsonify({"reply": "ERROR: " + str(e)})
+    except Exception as e:
+        print("🔥 OPENAI FAILED:", repr(e))
+        return jsonify({"reply": "THE SPIRIT IS SILENT..."})
 
 # -------------------------
-# THINK (test endpoint)
+# THINK (TEST)
 # -------------------------
 @app.route("/think", methods=["POST"])
 def think():
@@ -74,11 +79,11 @@ def think():
     })
 
 # -------------------------
-# LOCAL RUN
+# LOCAL RUN ONLY
 # -------------------------
 if __name__ == "__main__":
 
-    print("SERVER STARTING...")
-    print("OPENAI KEY LOADED:", bool(os.getenv("OPENAI_API_KEY")))
+    print("🚀 SERVER STARTING...")
+    print("🔑 OPENAI KEY LOADED:", bool(os.getenv("OPENAI_API_KEY")))
 
     app.run(host="0.0.0.0", port=10000)
