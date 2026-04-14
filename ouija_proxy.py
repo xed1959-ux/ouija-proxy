@@ -4,35 +4,44 @@ import os
 
 app = Flask(__name__)
 
-client = OpenAI()
+print("🚀 SERVER STARTING...")
 
-@app.route("/")
+# -------------------------
+# OPENAI CLIENT
+# -------------------------
+api_key = os.getenv("OPENAI_API_KEY")
+
+print("🔑 OPENAI KEY LOADED:", bool(api_key))
+
+client = OpenAI(api_key=api_key)
+
+# -------------------------
+# ROOT
+# -------------------------
+@app.route("/", methods=["GET"])
 def home():
     return "Ouija proxy is running"
 
+# -------------------------
+# ASK ENDPOINT
+# -------------------------
 @app.route("/ask", methods=["POST"])
 def ask():
-
-    print("👻 ASK ENDPOINT HIT")
-
-    data = request.get_json() or {}
-    message = data.get("message", "")
-
-    print("📩 MESSAGE:", message)
-    print("🔑 KEY EXISTS:", os.getenv("OPENAI_API_KEY") is not None)
-
-    if not message:
-        return jsonify({"reply": "..."})
+    print("📩 ASK ENDPOINT HIT")
 
     try:
-        print("⚡ CALLING OPENAI...")
+        data = request.get_json() or {}
+        message = data.get("message", "")
 
-        completion = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
+        print("🧠 USER MESSAGE:", message)
+        print("ABOUT TO CALL OPENAI")
+
+        response = client.responses.create(
+            model="gpt-4.1-mini",
+            input=[
                 {
                     "role": "system",
-                    "content": "You are a mysterious ouija board spirit. Answer briefly and eerily."
+                    "content": "You are a mysterious Ouija board spirit. Answer briefly, slightly eerie, but helpful."
                 },
                 {
                     "role": "user",
@@ -41,9 +50,9 @@ def ask():
             ]
         )
 
-        reply = completion.choices[0].message.content.strip()
+        reply = response.output_text
 
-        print("✅ OPENAI OK:", reply)
+        print("✅ OPENAI RESPONSE OK")
 
         return jsonify({"reply": reply})
 
@@ -51,19 +60,19 @@ def ask():
         print("🔥 OPENAI FAILED:", repr(e))
         return jsonify({"reply": "THE SPIRIT IS SILENT..."})
 
+
+# -------------------------
+# THINK (test endpoint)
+# -------------------------
 @app.route("/think", methods=["POST"])
 def think():
-
     data = request.get_json() or {}
     message = data.get("message", "")
+    return jsonify({"reply": "SPIRIT MIRRORS: " + message[::-1]})
 
-    return jsonify({
-        "reply": "SPIRIT THINKS: " + message[::-1]
-    })
 
+# -------------------------
+# RUN (LOCAL ONLY)
+# -------------------------
 if __name__ == "__main__":
-
-    print("🚀 SERVER STARTING...")
-    print("🔑 OPENAI KEY LOADED:", bool(os.getenv("OPENAI_API_KEY")))
-
     app.run(host="0.0.0.0", port=10000)
