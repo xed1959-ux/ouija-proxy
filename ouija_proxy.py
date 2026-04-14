@@ -22,37 +22,17 @@ def ask():
 
     print("ASK ENDPOINT HIT")
 
-    data = request.get_json() or {}
-    message = data.get("message", "")
-
     try:
-        print("ABOUT TO CALL OPENAI")
+        import openai
+        print("OPENAI LIB LOADED")
 
-        completion = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a mysterious ouija board spirit. Answer briefly and eerily."
-                },
-                {
-                    "role": "user",
-                    "content": message
-                }
-            ]
-        )
+        print("ENV KEY EXISTS:", os.getenv("OPENAI_API_KEY") is not None)
 
-        reply = completion.choices[0].message.content
-
-        return jsonify({
-            "reply": reply
-        })
+        return jsonify({"reply": "DEBUG OK - NO OPENAI CALL YET"})
 
     except Exception as e:
-        print("OPENAI ERROR:", str(e))
-        return jsonify({
-            "reply": "THE SPIRIT IS SILENT..."
-        })
+        print("CRASH:", str(e))
+        return jsonify({"reply": "SERVER CRASH"})
 
 # -------------------------
 # THINK (testi)
