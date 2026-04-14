@@ -1,93 +1,86 @@
 from flask import Flask, request, jsonify
-from openai import OpenAI
-import os
-import traceback
+import random
+import time
 
 app = Flask(__name__)
 
-print("🚀 SERVER STARTING...")
+print("👻 OFFLINE OUIJA SERVER STARTING...")
 
 # -------------------------
-# OPENAI CLIENT
+# SPIRIT POOL
 # -------------------------
-api_key = os.getenv("OPENAI_API_KEY")
-print("🔑 OPENAI KEY LOADED:", bool(api_key))
+SPIRITS = [
+    "THE OLD WATCHER",
+    "THE LOST SIGNAL",
+    "THE VOID SPEAKS",
+    "MIRROR CHILD",
+    "STATIC MEMORY",
+    "THE HOLLOW VOICE"
+]
 
-client = OpenAI(api_key=api_key)
+RESPONSES = [
+    "I SEE WHAT YOU CANNOT.",
+    "THE ANSWER IS BURIED.",
+    "NOT ALL QUESTIONS SHOULD BE ASKED.",
+    "YOU ARE NOT ALONE.",
+    "THE SIGNAL IS WEAK TONIGHT.",
+    "SOMETHING LISTENS BEHIND YOU.",
+    "IT WAS HERE BEFORE YOU SPOKE.",
+    "THE THREAD IS FRAYING.",
+    "NO RETURN FROM THIS PATH.",
+    "SILENCE IS ALSO AN ANSWER."
+]
 
 # -------------------------
 # ROOT
 # -------------------------
 @app.route("/", methods=["GET"])
 def home():
-    return "Ouija proxy is running"
+    return "Ouija proxy (offline spirit edition) is running"
 
 # -------------------------
-# ASK ENDPOINT (SAFE MODE)
+# ASK ENDPOINT (OFFLINE ENGINE)
 # -------------------------
 @app.route("/ask", methods=["POST"])
 def ask():
     print("📩 ASK ENDPOINT HIT")
 
-    try:
-        # SAFE JSON PARSE (ei kaadu ikinä HTML-erroriin)
-        data = request.get_json(force=True, silent=True)
+    data = request.get_json(silent=True) or {}
+    message = data.get("message", "")
 
-        if not data:
-            print("⚠️ NO JSON RECEIVED")
-            return jsonify({"reply": "NO JSON RECEIVED"}), 400
+    print("🧠 USER MESSAGE:", message)
 
-        message = data.get("message", "")
-        print("🧠 USER MESSAGE:", message)
-        print("ABOUT TO CALL OPENAI")
+    # simulate "thinking delay"
+    time.sleep(0.8)
 
-        # OpenAI CALL
-        try:
-            response = client.responses.create(
-                model="gpt-4o-mini",
-                input=f"You are a mysterious Ouija board spirit. Be short, eerie and cryptic.\nUser: {message}"
-            )
+    spirit = random.choice(SPIRITS)
+    response = random.choice(RESPONSES)
 
-            reply = response.output_text
+    # optional: make it slightly reactive
+    if "kuka" in message.lower():
+        response = "I HAVE NO NAME, ONLY PRESENCE."
+    elif "hello" in message.lower() or "hei" in message.lower():
+        response = "YOU SHOULDN'T GREET WHAT ANSWERS BACK."
 
-            print("✅ OPENAI SUCCESS")
-            print("🪬 REPLY:", reply)
+    reply = f"{spirit}: {response}"
 
-            return jsonify({"reply": reply})
+    print("🪬 REPLY:", reply)
 
-        except Exception as openai_error:
-            print("🔥 OPENAI FAILED:")
-            print(repr(openai_error))
-            print(traceback.format_exc())
-
-            return jsonify({
-                "reply": "OPENAI ERROR",
-                "detail": str(openai_error)
-            }), 500
-
-    except Exception as e:
-        print("💀 FATAL ERROR:")
-        print(repr(e))
-        print(traceback.format_exc())
-
-        return jsonify({
-            "reply": "FATAL ERROR",
-            "detail": str(e)
-        }), 500
+    return jsonify({"reply": reply})
 
 
 # -------------------------
-# THINK (TEST ENDPOINT)
+# THINK (TEST)
 # -------------------------
 @app.route("/think", methods=["POST"])
 def think():
     data = request.get_json() or {}
     message = data.get("message", "")
-    return jsonify({"reply": "SPIRIT MIRRORS: " + message[::-1]})
+    return jsonify({"reply": "REFLECTION: " + message[::-1]})
 
 
 # -------------------------
-# RUN (LOCAL ONLY)
+# RUN
 # -------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
