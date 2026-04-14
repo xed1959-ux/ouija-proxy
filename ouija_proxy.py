@@ -1,3 +1,27 @@
+from flask import Flask, request, jsonify
+import random
+
+app = Flask(__name__)
+
+print("🚀 SERVER STARTING...")
+
+# -------------------------
+# MEMORY SYSTEM
+# -------------------------
+memory = {}
+world_mood = {"corruption": 0.0}
+spirit_state = {"level": 0}
+
+# -------------------------
+# ROOT
+# -------------------------
+@app.route("/", methods=["GET"])
+def home():
+    return "Ouija proxy is running"
+
+# -------------------------
+# ASK ENDPOINT
+# -------------------------
 @app.route("/ask", methods=["POST"])
 def ask():
     print("📩 ASK ENDPOINT HIT")
@@ -5,7 +29,12 @@ def ask():
     data = request.get_json(force=True) or {}
     message = data.get("message", "").strip().lower()
 
-    user_id = request.remote_addr  # yksinkertainen “muisti”
+    user_id = request.remote_addr
+
+    # init memory
+    if user_id not in memory:
+        memory[user_id] = {"count": 0}
+
     state = memory[user_id]
 
     # -------------------------
@@ -14,7 +43,7 @@ def ask():
     state["count"] += 1
 
     # -------------------------
-    # WORLD MOOD INCREASE
+    # WORLD MOOD
     # -------------------------
     world_mood["corruption"] += 0.01
     world_mood["corruption"] = min(world_mood["corruption"], 1.0)
@@ -26,7 +55,7 @@ def ask():
         spirit_state["level"] += 1
 
     # -------------------------
-    # SPIRIT SELECTION (evolves)
+    # SPIRITS
     # -------------------------
     base_spirits = [
         "THE OLD WATCHER",
@@ -37,18 +66,17 @@ def ask():
         "THE HOLLOW VOICE"
     ]
 
-    # higher level = darker naming
     if spirit_state["level"] > 3:
         spirit = random.choice(base_spirits) + " (AWAKENED)"
     else:
         spirit = random.choice(base_spirits)
 
-        # -------------------------
-    # RESPONSE BANK (EXPANDED)
+    # -------------------------
+    # RESPONSE BANK
     # -------------------------
     responses = [
 
-        # core Ouija
+ # core Ouija
         "I SEE WHAT YOU CANNOT.",
         "THE ANSWER IS BURIED.",
         "NOT ALL QUESTIONS SHOULD BE ASKED.",
@@ -145,18 +173,19 @@ def ask():
 "Birds fly, but they don't leave any footprints. You cannot follow them; there are no footprints left behind",
 "Don't be too serious about life. It's just a play"
     ]
+
     # -------------------------
-    # YES / NO BOOST
+    # YES / NO DETECTION
     # -------------------------
-    yes_no = any(w in message for w in ["onko", "oletko", "olenko", "is there", "is it", "Am I"])
+    yes_no = any(w in message for w in ["onko", "oletko", "olenko", "is there", "is it", "am I"])
 
     if yes_no:
-        response = random.choice(["YES", "NO", "YES", "NO", "MAYBE", "YES"])
+        response = random.choice(["YES", "NO", "YES", "NO", "MAYBE"])
     else:
         response = random.choice(responses)
 
     # -------------------------
-    # MEMORY-BASED BEHAVIOR
+    # MEMORY EFFECTS
     # -------------------------
     if state["count"] == 1:
         response = "I DID NOT EXPECT YOU."
@@ -166,18 +195,32 @@ def ask():
         response = "I REMEMBER YOU."
 
     # -------------------------
-    # CORRUPTION (WORLD MOOD)
+    # CORRUPTION EFFECT
     # -------------------------
     def corrupt(text):
         if random.random() < world_mood["corruption"]:
             return text + " /// STATIC ///"
         return text
 
-    # -------------------------
-    # FINAL OUTPUT
-    # -------------------------
     reply = f"{spirit}: {corrupt(response)}"
 
     print("🪬 REPLY:", reply)
 
     return jsonify({"reply": reply})
+
+
+# -------------------------
+# THINK (TEST)
+# -------------------------
+@app.route("/think", methods=["POST"])
+def think():
+    data = request.get_json() or {}
+    message = data.get("message", "")
+    return jsonify({"reply": "SPIRIT MIRRORS: " + message[::-1]})
+
+
+# -------------------------
+# RUN
+# -------------------------
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
