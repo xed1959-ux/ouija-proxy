@@ -58,12 +58,12 @@ def ask():
     # SPIRITS
     # -------------------------
     base_spirits = [
-        "THE OLD WATCHER",
-        "THE LOST SIGNAL",
-        "THE VOID SPEAKS",
-        "MIRROR CHILD",
-        "STATIC MEMORY",
-        "THE HOLLOW VOICE"
+        "I AM THE OLD WATCHER",
+        "I AM THE LOST SIGNAL",
+        "I AM THE VOID SPEAKS",
+        "I AM MIRROR CHILD",
+        "I AM STATIC MEMORY",
+        "I AM THE HOLLOW VOICE"
     ]
 
     if spirit_state["level"] > 3:
