@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import random
 
 app = Flask(__name__)
-
+print("🔥 REAL FILE LOADED")
 print("🚀 SERVER STARTING...")
 
 # -------------------------
